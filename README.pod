@@ -122,9 +122,9 @@ easy to make.
 =head1 SUBTESTS
 
 Subtest formatting can be done by passing a an integer "level" parameter to
-C<counter()"; see the function's documentation for details.
+C<counter()>; see the function's documentation for details.
 
->=head1 SEE ALSO
+=head1 SEE ALSO
 
 Please see those modules/websites for more information related to this module.
 
