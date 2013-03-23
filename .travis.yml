@@ -11,17 +11,18 @@ install:
    - git config user.email 'travis@nowhere.dne'
 
    # echo "# Deal with all of the DZIL dependancies, quickly and quietly"
-   - export PERL_CPANM_OPT='--metacpan --skip-satisfied'
+   # export PERL_CPANM_OPT='--metacpan --skip-satisfied'
+   - export PERL_CPANM_OPT='--metacpan'
    - rm -rf ~/.cpanm
    - mkdir ~/.cpanm
    - sudo mount tmpfs -t tmpfs ~/.cpanm
-   - cpanm --quiet --notest --skip-satisfied Dist::Zilla
+   - export AUTOMATED_TESTING=1 HARNESS_OPTIONS=j10:c HARNESS_TIMER=1
+   - cpanm --quiet Dist::Zilla Module::Metadata
    - dzil authordeps | grep -vP '[^\w:]' | cpanm --quiet --notest
 
    # echo "# for LinkCheck"
    - cpanp x
 
-   - export AUTOMATED_TESTING=1 HARNESS_OPTIONS=j10:c HARNESS_TIMER=1
    - dzil listdeps | grep -vP '[^\w:]' | cpanm --verbose
 
 script:
