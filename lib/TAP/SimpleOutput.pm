@@ -5,7 +5,7 @@ package TAP::SimpleOutput;
 use strict;
 use warnings;
 
-use Sub::Exporter -setup => { exports => [ qw{ counters } ] };
+use Sub::Exporter::Progressive -setup => { exports => [ qw{ counters } ] };
 
 =func counters($level)
 
