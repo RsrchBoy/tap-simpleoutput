@@ -76,6 +76,7 @@ sub counters {
         sub { $indent .     'ok ' . ++$i . " # skip $_[0]" },
         sub { $indent . "1..$i"                            },
         sub { "$_[0] # TODO $_[1]"                         },
+        sub { $indent . "$_[0]"                            },
     );
 }
 
