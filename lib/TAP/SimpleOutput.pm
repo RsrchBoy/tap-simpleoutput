@@ -1,4 +1,21 @@
+#
+# This file is part of TAP-SimpleOutput
+#
+# This software is Copyright (c) 2012 by Chris Weyl.
+#
+# This is free software, licensed under:
+#
+#   The GNU Lesser General Public License, Version 2.1, February 1999
+#
 package TAP::SimpleOutput;
+BEGIN {
+  $TAP::SimpleOutput::AUTHORITY = 'cpan:RSRCHBOY';
+}
+{
+  $TAP::SimpleOutput::VERSION = '0.002';
+}
+# git description: 0.001-9-g9dc6c5b
+
 
 # ABSTRACT: Simple closure-driven TAP generator
 
@@ -7,7 +24,82 @@ use warnings;
 
 use Sub::Exporter::Progressive -setup => { exports => [ qw{ counters } ] };
 
-=func counters($level)
+
+sub counters {
+    my $level = shift @_ || 0;
+    $level *= 4;
+    my $i = 0;
+
+    my $indent = !$level ? q{} : (' ' x $level);
+
+    return (
+        sub { $indent .     'ok ' . ++$i . " - $_[0]"      },
+        sub { $indent . 'not ok ' . ++$i . " - $_[0]"      },
+        sub { $indent .     'ok ' . ++$i . " # skip $_[0]" },
+        sub { $indent . "1..$i"                            },
+        sub { "$_[0] # TODO $_[1]"                         },
+        sub { $indent . "$_[0]"                            },
+    );
+}
+
+!!42;
+
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=for :stopwords Chris Weyl SUBTESTS subtests Subtests subtest Subtest
+
+=head1 NAME
+
+TAP::SimpleOutput - Simple closure-driven TAP generator
+
+=head1 VERSION
+
+This document describes version 0.002 of TAP::SimpleOutput - released November 10, 2013 as part of TAP-SimpleOutput.
+
+=head1 SYNOPSIS
+
+    use TAP::SimpleOutput 'counter';
+
+    my ($_ok, $_nok, $_skip, $_plan) = counters();
+    say $_ok->('TestClass has a metaclass');
+    say $_ok->('TestClass is a Moose class');
+    say $_ok->('TestClass has an attribute named bar');
+    say $_ok->('TestClass has an attribute named baz');
+    do {
+        my ($_ok, $_nok, $_skip, $_plan) = counters(1);
+        say $_ok->(q{TestClass's attribute baz does TestRole::Two});
+        say $_ok->(q{TestClass's attribute baz has a reader});
+        say $_ok->(q{TestClass's attribute baz option reader correct});
+        say $_plan->();
+    };
+    say $_ok->(q{[subtest] checking TestClass's attribute baz});
+    say $_ok->('TestClass has an attribute named foo');
+
+    # STDOUT looks like:
+    ok 1 - TestClass has a metaclass
+    ok 2 - TestClass is a Moose class
+    ok 3 - TestClass has an attribute named bar
+    ok 4 - TestClass has an attribute named baz
+        ok 1 - TestClass's attribute baz does TestRole::Two
+        ok 2 - TestClass's attribute baz has a reader
+        ok 3 - TestClass's attribute baz option reader correct
+        1..3
+    ok 5 - [subtest] checking TestClass's attribute baz
+    ok 6 - TestClass has an attribute named foo
+
+=head1 DESCRIPTION
+
+We provide one function, C<counters()>, that returns a number of simple
+closures designed to help output TAP easily and correctly, with a minimum of
+fuss.
+
+=head1 FUNCTIONS
+
+=head2 counters($level)
 
 This function returns four closures that each generate a different type of TAP
 output.  It takes an optional C<$level> that determines the indentation level
@@ -61,68 +153,6 @@ subtest closures are not inadvertently used at an upper level.
         1..4
     ok 3 - subtest passed
 
-=cut
-
-sub counters {
-    my $level = shift @_ || 0;
-    $level *= 4;
-    my $i = 0;
-
-    my $indent = !$level ? q{} : (' ' x $level);
-
-    return (
-        sub { $indent .     'ok ' . ++$i . " - $_[0]"      },
-        sub { $indent . 'not ok ' . ++$i . " - $_[0]"      },
-        sub { $indent .     'ok ' . ++$i . " # skip $_[0]" },
-        sub { $indent . "1..$i"                            },
-        sub { "$_[0] # TODO $_[1]"                         },
-        sub { $indent . "$_[0]"                            },
-    );
-}
-
-!!42;
-__END__
-
-=for stopwords SUBTESTS subtests Subtests subtest Subtest
-
-=head1 SYNOPSIS
-
-    use TAP::SimpleOutput 'counter';
-
-    my ($_ok, $_nok, $_skip, $_plan) = counters();
-    say $_ok->('TestClass has a metaclass');
-    say $_ok->('TestClass is a Moose class');
-    say $_ok->('TestClass has an attribute named bar');
-    say $_ok->('TestClass has an attribute named baz');
-    do {
-        my ($_ok, $_nok, $_skip, $_plan) = counters(1);
-        say $_ok->(q{TestClass's attribute baz does TestRole::Two});
-        say $_ok->(q{TestClass's attribute baz has a reader});
-        say $_ok->(q{TestClass's attribute baz option reader correct});
-        say $_plan->();
-    };
-    say $_ok->(q{[subtest] checking TestClass's attribute baz});
-    say $_ok->('TestClass has an attribute named foo');
-
-    # STDOUT looks like:
-    ok 1 - TestClass has a metaclass
-    ok 2 - TestClass is a Moose class
-    ok 3 - TestClass has an attribute named bar
-    ok 4 - TestClass has an attribute named baz
-        ok 1 - TestClass's attribute baz does TestRole::Two
-        ok 2 - TestClass's attribute baz has a reader
-        ok 3 - TestClass's attribute baz option reader correct
-        1..3
-    ok 5 - [subtest] checking TestClass's attribute baz
-    ok 6 - TestClass has an attribute named foo
-
-
-=head1 DESCRIPTION
-
-We provide one function, C<counters()>, that returns a number of simple
-closures designed to help output TAP easily and correctly, with a minimum of
-fuss.
-
 =head1 USAGE WITH Test::Builder::Tester
 
 This package was created from code I was using to make it easier to test my
@@ -144,7 +174,44 @@ C<counter()>; see the function's documentation for details.
 
 =head1 SEE ALSO
 
+Please see those modules/websites for more information related to this module.
+
+=over 4
+
+=item *
+
 L<Test::Builder::Tester>
+
+=item *
+
 L<TAP::Harness>
+
+=back
+
+=head1 SOURCE
+
+The development version is on github at L<http://github.com/RsrchBoy/tap-simpleoutput>
+and may be cloned from L<git://github.com/RsrchBoy/tap-simpleoutput.git>
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website
+https://github.com/RsrchBoy/tap-simpleoutput/issues
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
+
+=head1 AUTHOR
+
+Chris Weyl <cweyl@alumni.drew.edu>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2012 by Chris Weyl.
+
+This is free software, licensed under:
+
+  The GNU Lesser General Public License, Version 2.1, February 1999
 
 =cut
