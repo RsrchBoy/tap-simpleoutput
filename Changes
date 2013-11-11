@@ -2,5 +2,10 @@ Revision history for TAP-SimpleOutput
 
 {{$NEXT}}
 
+0.002     2013-11-10 23:07:07 PST-0800
+	* add $_add closure; $_todo is undocumented (?) so this one is for now as
+	  well... but we need it for Test::Moose::More's tests and the recent
+	  changes to Test::More.
+
 0.001     2012-10-02 20:28:49 PST8PDT
 	* initial release
