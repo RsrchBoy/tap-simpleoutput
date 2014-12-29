@@ -15,12 +15,14 @@ output.  It takes an optional C<$level> that determines the indentation level
 variable that keeps track of how many test have been run so far; this allows
 them to always output the correct test number.
 
-    my ($_ok, $_nok, $_skip, $_plan) = counters();
+    my ($_ok, $_nok, $_skip, $_plan, $_todo, $_freeform) = counters();
 
-    $_ok->('whee')   returns "ok 1 - whee"
-    $_nok->('boo')   returns "not ok 2 - boo"
-    $_skip->('baz')  returns "ok 3 # skip baz"
-    $_plan->()       returns "1..3"
+    $_ok->('whee')            returns "ok 1 - whee"
+    $_nok->('boo')            returns "not ok 2 - boo"
+    $_skip->('baz')           returns "ok 3 # skip baz"
+    $_plan->()                returns "1..3"
+    $_todo->('bip', 'daleks') returns "bip # TODO daleks"
+    $_freeform->('yay')       returns "yay"
 
 Note that calling the C<$_plan> coderef only returns an intelligible response
 when called after all the output has been generated; this is analogous to
