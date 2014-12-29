@@ -71,12 +71,12 @@ sub counters {
     my $indent = !$level ? q{} : (' ' x $level);
 
     return (
-        sub { $indent .     'ok ' . ++$i . " - $_[0]"      },
-        sub { $indent . 'not ok ' . ++$i . " - $_[0]"      },
-        sub { $indent .     'ok ' . ++$i . " # skip $_[0]" },
-        sub { $indent . "1..$i"                            },
-        sub { "$_[0] # TODO $_[1]"                         },
-        sub { $indent . "$_[0]"                            },
+        sub { $indent .     'ok ' . ++$i . " - $_[0]"      }, # ok
+        sub { $indent . 'not ok ' . ++$i . " - $_[0]"      }, # nok
+        sub { $indent .     'ok ' . ++$i . " # skip $_[0]" }, # skip
+        sub { $indent . "1..$i"                            }, # plan
+        sub { "$_[0] # TODO $_[1]"                         }, # todo
+        sub { $indent . "$_[0]"                            }, # freeform
     );
 }
 
