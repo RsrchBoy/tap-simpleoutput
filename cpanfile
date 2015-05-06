@@ -1,5 +1,5 @@
 requires "Sub::Exporter::Progressive" => "0";
-requires "perl" => "v5.10.0";
+requires "perl" => "5.008";
 requires "strict" => "0";
 requires "warnings" => "0";
 
@@ -9,13 +9,13 @@ on 'test' => sub {
   requires "IPC::Open3" => "0";
   requires "Test::CheckDeps" => "0.010";
   requires "Test::More" => "0.94";
-  requires "perl" => "v5.10.0";
+  requires "perl" => "5.008";
   requires "utf8" => "0";
 };
 
 on 'configure' => sub {
   requires "ExtUtils::MakeMaker" => "0";
-  requires "perl" => "v5.10.0";
+  requires "perl" => "5.006";
 };
 
 on 'develop' => sub {

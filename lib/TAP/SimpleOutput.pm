@@ -5,8 +5,6 @@ package TAP::SimpleOutput;
 use strict;
 use warnings;
 
-use v5.10;
-
 use Sub::Exporter::Progressive -setup => {
     exports => [
         qw{ counters counters_and_levelset },
