@@ -1,7 +1,5 @@
 Revision history for TAP-SimpleOutput
 
-{{$NEXT}}
-
 0.003     2015-05-05 21:58:29 PDT-0700
 	* add changes_and_levelset()
 
