@@ -5,7 +5,14 @@ package TAP::SimpleOutput;
 use strict;
 use warnings;
 
-use Sub::Exporter::Progressive -setup => { exports => [ qw{ counters } ] };
+use v5.10;
+
+use Sub::Exporter::Progressive -setup => {
+    exports => [
+        qw{ counters counters_and_levelset },
+    ],
+};
+
 
 =func counters($level)
 
@@ -66,6 +73,23 @@ subtest closures are not inadvertently used at an upper level.
 =cut
 
 sub counters {
+    my @counters = _build_counters(@_);
+    pop @counters;
+    return @counters;
+}
+
+=func counters_and_levelset($level)
+
+Acts as counters(), except returns an additional coderef that can be used to
+adjust the level of the counters.
+
+This is not something you're likely to need.
+
+=cut
+
+sub counters_and_levelset { goto \&_build_counters }
+
+sub _build_counters {
     my $level = shift @_ || 0;
     $level *= 4;
     my $i = 0;
@@ -79,6 +103,15 @@ sub counters {
         sub { $indent . "1..$i"                            }, # plan
         sub { "$_[0] # TODO $_[1]"                         }, # todo
         sub { $indent . "$_[0]"                            }, # freeform
+        sub {
+            # if we're called with a new level, set $level and $indent
+            # appropriately
+            do { $level = $_[0] * 4; $indent = !$level ? q{} : (' ' x $level) }
+                if defined $_[0];
+
+            # return our new/set level regardless, in the form we passed it in
+            return $level / 4;
+        },
     );
 }
 
