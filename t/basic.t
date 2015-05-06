@@ -5,6 +5,41 @@ use utf8;
 use Test::More;
 use TAP::SimpleOutput 'counters';
 
+sub _check_level {
+    my ($title, $counters, $level) = @_;
+
+    my ($_ok, $_nok, $_skip, $_plan, $_todo) = @$counters;
+
+    my @output;
+    push @output, $_ok->('TestClass has a metaclass');
+    push @output, $_skip->('TestClass is a Moose class');
+    push @output, $_nok->('TestClass has an attribute named bar');
+    push @output, $_ok->('TestClass has an attribute named baz');
+    push @output, $_todo->($_ok->('TestClass has an attribute named foo'), 'next');
+    push @output, $_plan->();
+
+    my $indent = !$level ? q{} : (' ' x (4*$level));
+
+    my @expected = map { "$indent$_" } (
+        qq{ok 1 - TestClass has a metaclass},
+        qq{ok 2 # skip TestClass is a Moose class},
+        qq{not ok 3 - TestClass has an attribute named bar},
+        qq{ok 4 - TestClass has an attribute named baz},
+        qq{ok 5 - TestClass has an attribute named foo # TODO next},
+        qq{1..5},
+    );
+
+    is_deeply
+        [ @output   ],
+        [ @expected ],
+        "TAP output as expected: $title",
+    ;
+}
+
+_check_level 'basic'   => [counters];
+_check_level 'level 1' => [counters(1)], 1;
+
+# levels and levels...
 {
     my ($_ok, $_nok, $_skip, $_plan, $_todo) = counters();
     my @output;
