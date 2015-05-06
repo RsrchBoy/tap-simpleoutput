@@ -1,4 +1,4 @@
-requires "Sub::Exporter" => "0";
+requires "Sub::Exporter::Progressive" => "0";
 requires "perl" => "v5.10.0";
 requires "strict" => "0";
 requires "warnings" => "0";

@@ -105,6 +105,13 @@ subtest closures are not inadvertently used at an upper level.
         1..4
     ok 3 - subtest passed
 
+## counters\_and\_levelset($level)
+
+Acts as counters(), except returns an additional coderef that can be used to
+adjust the level of the counters.
+
+This is not something you're likely to need.
+
 # USAGE WITH Test::Builder::Tester
 
 This package was created from code I was using to make it easier to test my
