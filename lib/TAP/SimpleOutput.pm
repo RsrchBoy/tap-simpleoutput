@@ -193,7 +193,7 @@ easy to make.
 
 =head1 SUBTESTS
 
-Subtest formatting can be done by passing a an integer "level" parameter to
+Subtest formatting can be done by passing an integer "level" parameter to
 C<counter()>; see the function's documentation for details.
 
 =head1 SEE ALSO
