@@ -3,12 +3,12 @@ use warnings;
 use utf8;
 
 use Test::More;
-use TAP::SimpleOutput 'counters';
+use TAP::SimpleOutput qw{ counters counters_as_hashref };
 
 sub _check_level {
     my ($title, $counters, $level) = @_;
 
-    my ($_ok, $_nok, $_skip, $_plan, $_todo) = @$counters;
+    my ($_ok, $_nok, $_skip, $_plan, $_todo, $_freeform) = @$counters;
 
     my @output;
     push @output, $_ok->('TestClass has a metaclass');
@@ -16,6 +16,7 @@ sub _check_level {
     push @output, $_nok->('TestClass has an attribute named bar');
     push @output, $_ok->('TestClass has an attribute named baz');
     push @output, $_todo->($_ok->('TestClass has an attribute named foo'), 'next');
+    push @output, $_freeform->('# hi there!');
     push @output, $_plan->();
 
     my $indent = !$level ? q{} : (' ' x (4*$level));
@@ -26,6 +27,7 @@ sub _check_level {
         qq{not ok 3 - TestClass has an attribute named bar},
         qq{ok 4 - TestClass has an attribute named baz},
         qq{ok 5 - TestClass has an attribute named foo # TODO next},
+        qq{# hi there!},
         qq{1..5},
     );
 
