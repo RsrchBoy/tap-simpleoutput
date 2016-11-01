@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/RsrchBoy/tap-simpleoutput.svg?branch=master)](https://travis-ci.org/RsrchBoy/tap-simpleoutput)
 [![Kwalitee status](http://cpants.cpanauthors.org/dist/TAP-SimpleOutput.png)](http://cpants.charsbar.org/dist/overview/TAP-SimpleOutput)
-[![Coverage Status](https://coveralls.io/repos/RsrchBoy/tap-simpleoutput/badge.png?branch=master)](https://coveralls.io/r/RsrchBoy/tap-simpleoutput?branch=master)
+[![Coverage Status](https://coveralls.io/repos/RsrchBoy/tap-simpleoutput/badge.svg?branch=master)](https://coveralls.io/r/RsrchBoy/tap-simpleoutput?branch=master)
 
 # NAME
 
@@ -8,7 +8,7 @@ TAP::SimpleOutput - Simple closure-driven TAP generator
 
 # VERSION
 
-This document describes version 0.003 of TAP::SimpleOutput - released May 05, 2015 as part of TAP-SimpleOutput.
+This document describes version 0.004 of TAP::SimpleOutput - released November 01, 2016 as part of TAP-SimpleOutput.
 
 # SYNOPSIS
 
@@ -105,6 +105,12 @@ subtest closures are not inadvertently used at an upper level.
         1..4
     ok 3 - subtest passed
 
+## counters\_as\_hashref
+
+Same as counters(), except that we return a hashref rather than a list, where
+the keys are "ok", "nok", "skip", "plan", "todo", and "freeform", and the
+values are the corresponding coderefs.
+
 ## counters\_and\_levelset($level)
 
 Acts as counters(), except returns an additional coderef that can be used to
@@ -141,7 +147,7 @@ Please see those modules/websites for more information related to this module.
 # BUGS
 
 Please report any bugs or feature requests on the bugtracker website
-https://github.com/RsrchBoy/tap-simpleoutput/issues
+[https://github.com/RsrchBoy/tap-simpleoutput/issues](https://github.com/RsrchBoy/tap-simpleoutput/issues)
 
 When submitting a bug or request, please include a test-file or a
 patch to an existing test-file that illustrates the bug or desired
