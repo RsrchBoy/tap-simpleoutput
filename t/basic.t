@@ -41,6 +41,21 @@ sub _check_level {
 _check_level 'basic'   => [counters];
 _check_level 'level 1' => [counters(1)], 1;
 
+{
+    # we're kinda cheating here a little bit, but really...  this is what we
+    # need to test.
+    my $out = counters_as_hashref;
+    my @counters = (
+        $out->{ok},
+        $out->{nok},
+        $out->{skip},
+        $out->{plan},
+        $out->{todo},
+        $out->{freeform},
+    );
+    _check_level 'counters_as_hashref()' => [@counters];
+}
+
 # levels and levels...
 {
     my ($_ok, $_nok, $_skip, $_plan, $_todo) = counters();

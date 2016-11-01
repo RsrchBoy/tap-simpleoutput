@@ -7,7 +7,7 @@ use warnings;
 
 use Sub::Exporter::Progressive -setup => {
     exports => [
-        qw{ counters counters_and_levelset },
+        qw{ counters counters_and_levelset counters_as_hashref },
     ],
 };
 
@@ -74,6 +74,27 @@ sub counters {
     my @counters = _build_counters(@_);
     pop @counters;
     return @counters;
+}
+
+=func counters_as_hashref
+
+Same as counters(), except that we return a hashref rather than a list, where
+the keys are "ok", "nok", "skip", "plan", "todo", and "freeform", and the
+values are the corresponding coderefs.
+
+=cut
+
+sub counters_as_hashref {
+    my @counters = _build_counters(@_);
+
+    return {
+        ok       => shift @counters,
+        nok      => shift @counters,
+        skip     => shift @counters,
+        plan     => shift @counters,
+        todo     => shift @counters,
+        freeform => shift @counters,
+    };
 }
 
 =func counters_and_levelset($level)
