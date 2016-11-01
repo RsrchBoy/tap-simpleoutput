@@ -1,6 +1,8 @@
 Revision history for TAP-SimpleOutput
 
 {{$NEXT}}
+	* Add tests for the "freeform" coderef
+	* Add a counters_as_hashref(), to return a hashref of our counters
 
 0.003     2015-05-05 21:58:29 PDT-0700
 	* add changes_and_levelset()
