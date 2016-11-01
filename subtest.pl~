@@ -1,0 +1,26 @@
+use v5.10;
+use strict;
+use warnings;
+
+# debugging...
+use Smart::Comments '###';
+
+use lib 'lib';
+
+use TAP::SimpleOutput ':all';
+
+my $out = counters_as_hashref();
+
+### $out
+
+say TAP::SimpleOutput::subtest_header $out->{freeform} => 'subtest name';
+say TAP::SimpleOutput::subtest_header $out => 'subtest name';
+
+__END__
+
+say TAP::SimpleOutput::subtest_output_pass 'our subtest' => $out => sub {
+    my ($_ok, $_nok) = counters(1);
+
+    say "well, fuck";
+
+};
