@@ -6,11 +6,18 @@ use strict;
 use warnings;
 
 use Sub::Exporter::Progressive -setup => {
-    exports => [
-        qw{ counters counters_and_levelset counters_as_hashref },
-    ],
+    exports => [ qw{
+        counters counters_and_levelset counters_as_hashref
+        subtest_header subtest_header_needed
+    } ],
+    groups => {
+        default => [],
+        subtest => [ qw{ subtest_header subtest_header_needed } ],
+    },
 };
 
+use Carp 'croak';
+use Class::Load 'try_load_class';
 
 =func counters($level)
 
@@ -132,6 +139,72 @@ sub _build_counters {
             return $level / 4;
         },
     );
+}
+
+=func subtest_header_needed()
+
+Returns true if the level of Test::More available will output a subtest header.
+
+Note that this function will attempt to load L<Test::More> and L<Perl::Version>.
+If either of these packages are unavailable, it will L<Carp/croak>.
+
+=cut
+
+my $_subtest_header_needed;
+sub subtest_header_needed {
+
+    return $_subtest_header_needed
+        if defined $_subtest_header_needed;
+
+    do {
+        my ($success, $error) = try_load_class $_;
+        croak __PACKAGE__ . " needs $_, but can't find it: $error"
+            unless $success;
+    } for qw{ Perl::Version Test::More };
+
+    return $_subtest_header_needed
+        = Perl::Version->new(Test::More->VERSION) >= Perl::Version->new('0.98_05');
+}
+
+sub _subtest_header_indent { $INC{'Test/Stream.pm'} ? q{} : (' ' x 4) }
+
+=func subtest_header()
+
+Given an output coderef (e.g. the 'freeform' from counters() or
+counters_as_hashref()) and a subtest name (that is, a string), we return a
+subtest header appropriately indented for the level of Test::More available.
+
+e.g.
+
+    my $out = counters_as_hashref();
+
+    say subtest_header $out->{freeform} => 'Our subtest name!';
+
+    # given a hashref, look for the coderef in the 'freeform' slot
+    say subtest_header $out => 'Our subtest name!';
+
+    # or with the reviled Test::Builder::Tester:
+    test_out subtest_header($out => 'Our subtest name!')
+        if subtest_header_needed;
+
+Returns true if the level of Test::More available will output a subtest header.
+
+Note that this function will attempt to load L<Test::More> and
+L<Perl::Version>.  If either of these packages are unavailable, it will
+L<Carp/croak>.
+
+=cut
+
+sub subtest_header {
+    my ($out, $name) = @_;
+
+    $out = $out->{freeform}
+        if ref $out && ref $out eq 'HASH';
+
+    return subtest_header_needed
+        ? $out->(_subtest_header_indent . "# Subtest: $name")
+        : q{}
+        ;
 }
 
 !!42;
