@@ -137,7 +137,7 @@ sub _build_counters {
 !!42;
 __END__
 
-=for stopwords SUBTESTS subtests Subtests subtest Subtest
+=for stopwords SUBTESTS subtests Subtests subtest Subtest freeform nok todo
 
 =head1 SYNOPSIS
 
