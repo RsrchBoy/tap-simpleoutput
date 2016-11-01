@@ -8,7 +8,7 @@ TAP::SimpleOutput - Simple closure-driven TAP generator
 
 # VERSION
 
-This document describes version 0.004 of TAP::SimpleOutput - released November 01, 2016 as part of TAP-SimpleOutput.
+This document describes version 0.005 of TAP::SimpleOutput - released November 01, 2016 as part of TAP-SimpleOutput.
 
 # SYNOPSIS
 
@@ -118,6 +118,38 @@ adjust the level of the counters.
 
 This is not something you're likely to need.
 
+## subtest\_header\_needed()
+
+Returns true if the level of Test::More available will output a subtest header.
+
+Note that this function will attempt to load [Test::More](https://metacpan.org/pod/Test::More) and [Perl::Version](https://metacpan.org/pod/Perl::Version).
+If either of these packages are unavailable, it will ["croak" in Carp](https://metacpan.org/pod/Carp#croak).
+
+## subtest\_header()
+
+Given an output coderef (e.g. the 'freeform' from counters() or
+counters\_as\_hashref()) and a subtest name (that is, a string), we return a
+subtest header appropriately indented for the level of Test::More available.
+
+e.g.
+
+    my $out = counters_as_hashref();
+
+    say subtest_header $out->{freeform} => 'Our subtest name!';
+
+    # given a hashref, look for the coderef in the 'freeform' slot
+    say subtest_header $out => 'Our subtest name!';
+
+    # or with the reviled Test::Builder::Tester:
+    test_out subtest_header($out => 'Our subtest name!')
+        if subtest_header_needed;
+
+Returns true if the level of Test::More available will output a subtest header.
+
+Note that this function will attempt to load [Test::More](https://metacpan.org/pod/Test::More) and
+[Perl::Version](https://metacpan.org/pod/Perl::Version).  If either of these packages are unavailable, it will
+["croak" in Carp](https://metacpan.org/pod/Carp#croak).
+
 # USAGE WITH Test::Builder::Tester
 
 This package was created from code I was using to make it easier to test my
@@ -134,7 +166,7 @@ easy to make.
 
 # SUBTESTS
 
-Subtest formatting can be done by passing a an integer "level" parameter to
+Subtest formatting can be done by passing an integer "level" parameter to
 `counter()`; see the function's documentation for details.
 
 # SEE ALSO
