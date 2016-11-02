@@ -1,7 +1,5 @@
 Revision history for TAP-SimpleOutput
 
-{{$NEXT}}
-
 0.006-TRIAL  2016-11-01 23:38:10 CDT-0500
 	* Found and fixed a weird bug on Perls < 5.20
 
