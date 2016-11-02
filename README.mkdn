@@ -8,7 +8,7 @@ TAP::SimpleOutput - Simple closure-driven TAP generator
 
 # VERSION
 
-This document describes version 0.005 of TAP::SimpleOutput - released November 01, 2016 as part of TAP-SimpleOutput.
+This document describes version 0.006 of TAP::SimpleOutput - released November 01, 2016 as part of TAP-SimpleOutput.
 
 # SYNOPSIS
 
