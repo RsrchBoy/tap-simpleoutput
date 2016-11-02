@@ -201,7 +201,7 @@ sub subtest_header {
     $out = $out->{freeform}
         if ref $out && ref $out eq 'HASH';
 
-    return subtest_header_needed
+    return subtest_header_needed()
         ? $out->(_subtest_header_indent . "# Subtest: $name")
         : q{}
         ;
