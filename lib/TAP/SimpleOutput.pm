@@ -11,8 +11,8 @@ use Sub::Exporter::Progressive -setup => {
         subtest_header subtest_header_needed
     } ],
     groups => {
-        default => [],
-        subtest => [ qw{ subtest_header subtest_header_needed } ],
+        default => [ 'counters' ],
+        subtest => [ qw{ counters subtest_header subtest_header_needed } ],
     },
 };
 
@@ -21,20 +21,33 @@ use Class::Load 'try_load_class';
 
 =func counters($level)
 
-This function returns four closures that each generate a different type of TAP
-output.  It takes an optional C<$level> that determines the indentation level
-(e.g. for subtests).  These coderefs are all closed over the same counter
-variable that keeps track of how many test have been run so far; this allows
-them to always output the correct test number.
+When called in list context, this function returns a number of closures that
+each generate a different type of TAP output.  It takes an optional C<$level>
+that determines the indentation level (e.g. for subtests).  These coderefs are
+all closed over the same counter variable that keeps track of how many test
+have been run so far; this allows them to always output the correct test
+number.
 
     my ($_ok, $_nok, $_skip, $_plan, $_todo, $_freeform) = counters();
 
-    $_ok->('whee')            returns "ok 1 - whee"
-    $_nok->('boo')            returns "not ok 2 - boo"
-    $_skip->('baz')           returns "ok 3 # skip baz"
-    $_plan->()                returns "1..3"
-    $_todo->('bip', 'daleks') returns "bip # TODO daleks"
-    $_freeform->('yay')       returns "yay"
+    $_ok->('whee');                    # returns "ok 1 - whee"
+    $_nok->('boo');                    # returns "not ok 2 - boo"
+    $_skip->('baz');                   # returns "ok 3 # skip baz"
+    $_todo->($_ok->('bip'), 'daleks'); # returns "ok 4 - bip # TODO daleks"
+    $_plan->();                        # returns "1..4"
+    $_freeform->('yay');               # returns "yay"
+
+Alternatively, when called in scalar context this function returns a hashref
+of coderefs:
+
+    my $tap = counters();
+
+    $tap->{ok}->('whee');                          # returns "ok 1 - whee"
+    $tap->{nok}->('boo');                          # returns "not ok 2 - boo"
+    $tap->{skip}->('baz');                         # returns "ok 3 # skip baz"
+    $tap->{todo}->($tap->{ok}->('bip'), 'daleks'); # returns "ok 4 - bip # TODO daleks"
+    $tap->{plan}->();                              # returns "1..4"
+    $tap->{freeform}->('yay');                     # returns "yay"
 
 Note that calling the C<$_plan> coderef only returns an intelligible response
 when called after all the output has been generated; this is analogous to
@@ -78,8 +91,20 @@ subtest closures are not inadvertently used at an upper level.
 =cut
 
 sub counters {
-    my @counters = _build_counters(@_);
+    my $level = shift @_;
+
+    return { _build_counters($level) }
+        unless wantarray;
+
+    my $i = 0;
+    my @counters =
+        grep { $i++ % 2 }
+        _build_counters($level)
+        ;
+
+    # ditch levelset
     pop @counters;
+
     return @counters;
 }
 
@@ -91,18 +116,7 @@ values are the corresponding coderefs.
 
 =cut
 
-sub counters_as_hashref {
-    my @counters = _build_counters(@_);
-
-    return {
-        ok       => shift @counters,
-        nok      => shift @counters,
-        skip     => shift @counters,
-        plan     => shift @counters,
-        todo     => shift @counters,
-        freeform => shift @counters,
-    };
-}
+sub counters_as_hashref { scalar counters }
 
 =func counters_and_levelset($level)
 
@@ -123,13 +137,13 @@ sub _build_counters {
     my $indent = !$level ? q{} : (' ' x $level);
 
     return (
-        sub { $indent .     'ok ' . ++$i . " - $_[0]"      }, # ok
-        sub { $indent . 'not ok ' . ++$i . " - $_[0]"      }, # nok
-        sub { $indent .     'ok ' . ++$i . " # skip $_[0]" }, # skip
-        sub { $indent . "1..$i"                            }, # plan
-        sub { "$_[0] # TODO $_[1]"                         }, # todo
-        sub { $indent . "$_[0]"                            }, # freeform
-        sub {
+        ok       => sub { $indent .     'ok ' . ++$i . " - $_[0]"      },
+        nok      => sub { $indent . 'not ok ' . ++$i . " - $_[0]"      },
+        skip     => sub { $indent .     'ok ' . ++$i . " # skip $_[0]" },
+        plan     => sub { $indent . "1..$i"                            },
+        todo     => sub { "$_[0] # TODO $_[1]"                         },
+        freeform => sub { $indent . "$_[0]"                            },
+        levelset => sub {
             # if we're called with a new level, set $level and $indent
             # appropriately
             do { $level = $_[0] * 4; $indent = !$level ? q{} : (' ' x $level) }
