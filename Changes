@@ -2,6 +2,10 @@ Revision history for TAP-SimpleOutput
 
 {{$NEXT}}
 
+0.008     2016-11-15 17:59:39 CST-0600
+	* counters() now returns a hashref when called in scalar context.
+	* counters() is exported by default.
+
 0.007     2016-11-08 19:54:55 CST-0600
 	* No changes from 0.006-TRIAL.
 

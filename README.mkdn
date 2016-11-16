@@ -8,7 +8,7 @@ TAP::SimpleOutput - Simple closure-driven TAP generator
 
 # VERSION
 
-This document describes version 0.007 of TAP::SimpleOutput - released November 08, 2016 as part of TAP-SimpleOutput.
+This document describes version 0.008 of TAP::SimpleOutput - released November 15, 2016 as part of TAP-SimpleOutput.
 
 # SYNOPSIS
 
@@ -51,20 +51,33 @@ fuss.
 
 ## counters($level)
 
-This function returns four closures that each generate a different type of TAP
-output.  It takes an optional `$level` that determines the indentation level
-(e.g. for subtests).  These coderefs are all closed over the same counter
-variable that keeps track of how many test have been run so far; this allows
-them to always output the correct test number.
+When called in list context, this function returns a number of closures that
+each generate a different type of TAP output.  It takes an optional `$level`
+that determines the indentation level (e.g. for subtests).  These coderefs are
+all closed over the same counter variable that keeps track of how many test
+have been run so far; this allows them to always output the correct test
+number.
 
     my ($_ok, $_nok, $_skip, $_plan, $_todo, $_freeform) = counters();
 
-    $_ok->('whee')            returns "ok 1 - whee"
-    $_nok->('boo')            returns "not ok 2 - boo"
-    $_skip->('baz')           returns "ok 3 # skip baz"
-    $_plan->()                returns "1..3"
-    $_todo->('bip', 'daleks') returns "bip # TODO daleks"
-    $_freeform->('yay')       returns "yay"
+    $_ok->('whee');                    # returns "ok 1 - whee"
+    $_nok->('boo');                    # returns "not ok 2 - boo"
+    $_skip->('baz');                   # returns "ok 3 # skip baz"
+    $_todo->($_ok->('bip'), 'daleks'); # returns "ok 4 - bip # TODO daleks"
+    $_plan->();                        # returns "1..4"
+    $_freeform->('yay');               # returns "yay"
+
+Alternatively, when called in scalar context this function returns a hashref
+of coderefs:
+
+    my $tap = counters();
+
+    $tap->{ok}->('whee');                          # returns "ok 1 - whee"
+    $tap->{nok}->('boo');                          # returns "not ok 2 - boo"
+    $tap->{skip}->('baz');                         # returns "ok 3 # skip baz"
+    $tap->{todo}->($tap->{ok}->('bip'), 'daleks'); # returns "ok 4 - bip # TODO daleks"
+    $tap->{plan}->();                              # returns "1..4"
+    $tap->{freeform}->('yay');                     # returns "yay"
 
 Note that calling the `$_plan` coderef only returns an intelligible response
 when called after all the output has been generated; this is analogous to
