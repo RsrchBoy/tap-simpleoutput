@@ -1,7 +1,5 @@
 Revision history for TAP-SimpleOutput
 
-{{$NEXT}}
-
 0.009     2017-02-14 09:21:19 CST-0600
 	* Explicitly require Perl::Version: not doing so was causing explosions in
 	  test suites that use the new subtest header bits.
